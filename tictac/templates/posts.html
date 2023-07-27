@@ -4,6 +4,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View TicTacs</title>
     <style>
+        .rounded {
+            border-radius: 10px;
+        }
+        .comment {
+            padding: 5px;
+            margin: 10px;
+        }
         #comment-div {
             position: absolute;
             width: 50%;
@@ -11,8 +18,10 @@
             top: 50%;
             left: 50%;
             background: silver;
+            padding: 15px;
+            border-radius: 10px;
             transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -25%)
+            -ms-transform: translate(-50%, -25%);
         }
     </style>
 </head>
@@ -25,7 +34,7 @@
         <form id="commentForm" action="/comment" metod="post">
             <input type="hidden" id="formPostId" name="post_id" />
             <label for="comment">Comment: </label>
-            <input required id="comment" autocomplete="false" type="text" maxlength="256" name="text" />
+            <input required id="comment" autocomplete="off_oiaeroi" type="text" maxlength="256" name="text" />
             <input type="submit" />
         </form>
         <p id="error" hidden>Error posting comment</p>
@@ -34,23 +43,41 @@
     <a href="/"><h1>TicTac Home</h1></a>
     <h2>View TicTacs</h2>
     {% for post in posts %}
-    <div style="border-style: solid; margin-left: 15px; margin-right:15px">
-        <p>Posted by {{ post.name }}</p>
-        <h2 style="display: inline;">{{ post.title }}</h2>
-        <p>{{ post.body }}</p>
-        <img onclick="loadComments({{ post.post_id }})" width="32" height="32" src="{{url_for('static', filename='message.svg')}}" />
+    <div class="rounded" style="margin:15px; padding: 15px; background-color:gainsboro;">
+        <table>
+            <tr>
+                <td>
+                    <p>Posted by {{ post.name }}</p>
+                    <h2 style="display: inline;">{{ post.title }}</h2>
+                    <p>{{ post.body }}</p>
+                </td>
+                <td>
+                    <img style="float:right; margin-bottom:15px;" onclick="loadComments({{ post.post_id }})" width="32" height="32" src="{{url_for('static', filename='message.svg')}}" />
+                </td>
+            </tr>
+        </table>
     </div>
     {% endfor %}
     <script>
-        async function loadComments(post_id) {
-            const commentDiv = document.getElementById("comment-div");
+        var currentPostId = 0;
+        var refreshCommentTimeout = 0;
+        function refreshComments() {
+            if (!commentDiv.hidden) {
+                loadComments(currentPostId);
+            }
+        }
+        const commentDiv = document.getElementById("comment-div");
+        async function loadComments(postId) {
+            clearTimeout(refreshCommentTimeout);
+            refreshCommentTimeout = setTimeout(refreshComments, 10000)
+            currentPostId = postId;
             const commentEl = document.getElementById("comments");
             commentEl.innerHTML = "Loading...";
             commentDiv.hidden = false;
-            commentRequest = await fetch("/comments?id=" + post_id)
+            commentRequest = await fetch("/comments?id=" + postId)
             var val = await commentRequest.text();
             commentEl.innerHTML = val;
-            document.getElementById("formPostId").value = post_id;
+            document.getElementById("formPostId").value = postId;
         }
         const comment = document.getElementById("comment");
         const err = document.getElementById("error");
@@ -64,6 +91,7 @@
             if (r.ok) {
                 comment.value = "";
                 err.hidden = true;
+                loadComments(currentPostId);
             } else {
                 if (await r.text() == "notloggedin") {
                     err.innerHTML = "You need to <a href=\"{{url_for('login')}}\">login</a> or <a href=\"{{url_for('signup')}}\">signup</a> in order to post a comment."
