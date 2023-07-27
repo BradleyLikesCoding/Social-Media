@@ -1,0 +1,11 @@
+﻿{% if comments|length == 0 %}
+No comments yet...
+{% else %}
+{% for comment in comments %}
+<div style="border-style: solid;"><h3>{{comment.name}}</h3>
+    <p>
+        {{comment.text}}
+    </p>
+</div>
+{% endfor %}
+{% endif %}

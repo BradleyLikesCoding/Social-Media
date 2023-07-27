@@ -8,6 +8,7 @@
 
 import database
 from flask import Flask, render_template, request, session, redirect, url_for
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -15,7 +16,8 @@ app.secret_key = "v45g209yc7284h27890cgmq5829gm0c45h208cx02g58c74hm20mgut4ccm0"
 
 def main():
     database.init()
-    app.run(host="0.0.0.0", port=80)
+    #serve(app, listen="*:5000")
+    app.run(host="0.0.0.0", port=5000)
     database.session.commit()
 
 @app.route("/")
@@ -112,8 +114,30 @@ def post():
 def view_posts():
     return render_template("posts.html", posts=format_posts())
 
+@app.route("/comment", methods=["POST"])
+def comment():
+    if is_valid_user(session["user_id"]):
+        c = database.Comment.new(session["user_id"], request.form["post_id"], request.form["text"])
+    else:
+        return redirect(url_for("login"))
+
+@app.route("/comments")
+def comments():
+    print(format_comments())
+    return render_template("comments.html", comments=format_comments())
+
+def format_comments():
+    comments = database.session.query(database.Comment).filter_by(post_id=request.args["id"]).order_by(database.Comment.comment_id.desc())
+    comments_out = []
+    for p in comments:
+        comments_out.append(p)
+        comments_out[len(comments_out) - 1].name = get_user_by_id(comments_out[len(comments_out) - 1].commenter_id).username
+        if len(comments_out) > 50:
+            break
+    return comments_out
+
 def format_posts():
-    posts = database.session.query(database.Post)
+    posts = database.session.query(database.Post).order_by(database.Post.post_id.desc())
     posts_out = []
     for p in posts:
         posts_out.append(p)
