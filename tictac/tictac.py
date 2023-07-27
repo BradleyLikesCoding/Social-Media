@@ -92,6 +92,9 @@ def check_login(data):
     acc = database.session.query(database.Account).filter_by(username=data["name"]).first()
     return acc != None and acc.password == database.hash_password(data["pswd"])
 
+def get_user_by_id(id):
+    return database.session.query(database.Account).filter_by(id=id).first()
+
 @app.route("/post", methods=["POST", "GET"])
 def post():
     if is_valid_user(session["user_id"]):
@@ -104,6 +107,20 @@ def post():
             return redirect(url_for("index"))
     else:
         return(redirect(url_for("login")))
+
+@app.route("/posts")
+def view_posts():
+    return render_template("posts.html", posts=format_posts())
+
+def format_posts():
+    posts = database.session.query(database.Post)
+    posts_out = []
+    for p in posts:
+        posts_out.append(p)
+        posts_out[len(posts_out) - 1].name = get_user_by_id(posts_out[len(posts_out) - 1].owner_id).username
+        if len(posts_out) > 50:
+            break
+    return posts_out
 
 if __name__ == "__main__":
     main()
