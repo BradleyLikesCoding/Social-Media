@@ -118,8 +118,11 @@ def view_posts():
 def comment():
     if is_valid_user(session["user_id"]):
         c = database.Comment.new(session["user_id"], request.form["post_id"], request.form["text"])
+        database.session.add(c)
+        database.session.commit()
+        return("success")
     else:
-        return redirect(url_for("login"))
+        return "notloggedin"
 
 @app.route("/comments")
 def comments():
@@ -131,7 +134,7 @@ def format_comments():
     comments_out = []
     for p in comments:
         comments_out.append(p)
-        comments_out[len(comments_out) - 1].name = get_user_by_id(comments_out[len(comments_out) - 1].commenter_id).username
+        comments_out[len(comments_out) - 1].name = get_user_by_id(comments_out[len(comments_out) - 1].commenter_id).display_name
         if len(comments_out) > 50:
             break
     return comments_out
@@ -141,7 +144,7 @@ def format_posts():
     posts_out = []
     for p in posts:
         posts_out.append(p)
-        posts_out[len(posts_out) - 1].name = get_user_by_id(posts_out[len(posts_out) - 1].owner_id).username
+        posts_out[len(posts_out) - 1].name = get_user_by_id(posts_out[len(posts_out) - 1].owner_id).display_name
         if len(posts_out) > 50:
             break
     return posts_out

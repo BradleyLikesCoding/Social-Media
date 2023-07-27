@@ -18,10 +18,17 @@
 </head>
 <body>
     <div id="comment-div" hidden>
-        <div>
+        <div style="height:15%;">
             <h2 style="float: left;">Comments</h2>
-            <div onclick="this.parentNode.hidden = true;" style="cursor: pointer; font-size:50px; line-height: 1em; float: right;">&times;</div>
+            <div onclick="this.parentNode.parentNode.hidden = true;" style="cursor: pointer; font-size:50px; line-height: 1em; float: right;">&times;</div>
         </div>
+        <form id="commentForm" action="/comment" metod="post">
+            <input type="hidden" id="formPostId" name="post_id" />
+            <label for="comment">Comment: </label>
+            <input required id="comment" autocomplete="false" type="text" maxlength="256" name="text" />
+            <input type="submit" />
+        </form>
+        <p id="error" hidden>Error posting comment</p>
         <div id="comments">Loading...</div>
     </div>
     <a href="/"><h1>TicTac Home</h1></a>
@@ -42,9 +49,31 @@
             commentDiv.hidden = false;
             commentRequest = await fetch("/comments?id=" + post_id)
             var val = await commentRequest.text();
-            commentEl.innerHTML = val
-            console.log(val);
+            commentEl.innerHTML = val;
+            document.getElementById("formPostId").value = post_id;
         }
+        const comment = document.getElementById("comment");
+        const err = document.getElementById("error");
+        const commentForm = document.getElementById("commentForm");
+        commentForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const r = await fetch("/comment", {
+                method: "POST",
+                body: new FormData(commentForm)
+            });
+            if (r.ok) {
+                comment.value = "";
+                err.hidden = true;
+            } else {
+                if (await r.text() == "notloggedin") {
+                    err.innerHTML = "You need to <a href=\"{{url_for('login')}}\">login</a> or <a href=\"{{url_for('signup')}}\">signup</a> in order to post a comment."
+                    err.hidden = false;
+                } else {
+                    err.innerHTML = "Error posting comment"
+                    err.hidden = false;
+                }
+            }
+        });
     </script>
 </body>
 </html>
