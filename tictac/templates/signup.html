@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+    <title>Signup for TicTac</title>
+</head>
+<body>
+    <h1>Signup for TicTac</h1>
+    <form action="/signup" method="post">
+        <label for="displayname">Display name</label><input id="displayname" type="text" name="displayname" maxlenght="32" />
+        <label for="username">Username</label><input id="username" type="text" name="name" maxlenght="32" />
+        <label for="password">Password</label><input id="password" type="password" name="pswd" maxlength="40" />
+        <input type="submit" />
+        {{error if error != None else ""}}
+    </form>
+    <p>Already have an account? <a href="/login">Login</a> instead.</p>
+</body>
+</html>

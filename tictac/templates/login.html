@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+    <title>Login to TicTac</title>
+</head>
+<body>
+    <h1>Login to TicTac</h1>
+    <form action="/login" method="post">
+        <label for="username">Username</label><input id="username" type="text" name="name" maxlenght="32" />
+        <label for="password">Password</label><input id="password" type="password" name="pswd" maxlength="40" />
+        <input type="submit" />
+        {{error if error != None else ""}}
+    </form>
+    <p>Don't have an account? <a href="/signup">Signup</a> instead.</p>
+</body>
+</html>

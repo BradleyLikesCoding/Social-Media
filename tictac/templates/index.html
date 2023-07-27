@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+    <head>
+        <title>TicTac v1.0</title>
+    </head>
+    <body>
+        <h1>Welcome to TicTac v1.0</h1>
+        {% if loggedin %}<h2>{{"Logged in as " + displayname + " @" + name}}</h2>{% endif %}
+        {% if not loggedin %}<a href="/signup">Signup</a>
+        <a href="/login">Login</a>{% endif %}
+        <a href="/post">Post</a>
+        <a href="/posts">View Posts</a>
+        {% if loggedin %}<a href="/logout">Logout</a> {% endif %}
+    </body>
+</html>
