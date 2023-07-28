@@ -26,6 +26,30 @@
     </style>
 </head>
 <body>
+    <a href="/"><h1>TicTac Home</h1></a>
+    <h2>View TicTacs</h2>
+    {% for post in posts %}
+
+
+
+    <div onmouseover="showIcons(this)" onmouseout="hideIcons(this)" class="rounded" style="margin:15px; padding: 15px; background-color:gainsboro;">
+        <div style="width: 100%">
+            <div style="width: 80%;/*position: relative;*/ display: inline-block;">
+                <div>
+                    <p>Posted by {{ post.name }}</p>
+                    <h2 style="display: inline;">{{ post.title }}</h2>
+                    <p>{{ post.body }}</p>
+                </div>
+            </div>
+            <div class="iconsDiv" style="float: right; display: none; /*position: relative; left:95%;%/" hidden>
+                <img style="cursor: pointer;" onclick="loadComments({{ post.post_id }})" width="32" height="32" src="{{url_for('static', filename='message.svg')}}" />
+            </div>
+        </div>
+    </div>
+
+
+
+    {% endfor %}
     <div id="comment-div" hidden>
         <div style="height:15%;">
             <h2 style="float: left;">Comments</h2>
@@ -40,24 +64,6 @@
         <p id="error" hidden>Error posting comment</p>
         <div id="comments">Loading...</div>
     </div>
-    <a href="/"><h1>TicTac Home</h1></a>
-    <h2>View TicTacs</h2>
-    {% for post in posts %}
-    <div class="rounded" style="margin:15px; padding: 15px; background-color:gainsboro;">
-        <table>
-            <tr>
-                <td>
-                    <p>Posted by {{ post.name }}</p>
-                    <h2 style="display: inline;">{{ post.title }}</h2>
-                    <p>{{ post.body }}</p>
-                </td>
-                <td>
-                    <img style="float:right; margin-bottom:15px;" onclick="loadComments({{ post.post_id }})" width="32" height="32" src="{{url_for('static', filename='message.svg')}}" />
-                </td>
-            </tr>
-        </table>
-    </div>
-    {% endfor %}
     <script>
         var currentPostId = 0;
         var refreshCommentTimeout = 0;
@@ -69,12 +75,12 @@
         const commentDiv = document.getElementById("comment-div");
         async function loadComments(postId) {
             clearTimeout(refreshCommentTimeout);
-            refreshCommentTimeout = setTimeout(refreshComments, 10000)
+            refreshCommentTimeout = setTimeout(refreshComments, 10000);
             currentPostId = postId;
             const commentEl = document.getElementById("comments");
             commentEl.innerHTML = "Loading...";
             commentDiv.hidden = false;
-            commentRequest = await fetch("/comments?id=" + postId)
+            commentRequest = await fetch("/comments?id=" + postId);
             var val = await commentRequest.text();
             commentEl.innerHTML = val;
             document.getElementById("formPostId").value = postId;
@@ -94,14 +100,23 @@
                 loadComments(currentPostId);
             } else {
                 if (await r.text() == "notloggedin") {
-                    err.innerHTML = "You need to <a href=\"{{url_for('login')}}\">login</a> or <a href=\"{{url_for('signup')}}\">signup</a> in order to post a comment."
+                    err.innerHTML = "You need to <a href=\"{{url_for('login')}}\">login</a> or <a href=\"{{url_for('signup')}}\">signup</a> in order to post a comment.";
                     err.hidden = false;
                 } else {
-                    err.innerHTML = "Error posting comment"
+                    err.innerHTML = "Error posting comment";
                     err.hidden = false;
                 }
             }
         });
+        function showIcons(el) {
+            const e = el.querySelector(".iconsDiv")
+            e.style.display = "inline-block";
+        }
+        function hideIcons(el) {
+            const e = el.querySelector(".iconsDiv")
+            e.hidden = true;
+            e.style.display = "none";
+        }
     </script>
 </body>
 </html>
