@@ -8,8 +8,8 @@
     <a href="/"><h1>TicTac Home</h1></a>
     <h2>Post a TicTac</h2>
     <form action="/post" method="post">
-        <label for="title">Post title</label><input autocomplete="false" id="title" type="text" name="title" maxlenght="128" />
-        <label for="text">Post text</label><input autocomplete="false"id="text" type="text" name="text" maxlenght="512" />
+        <label for="title">Post title</label><input autocomplete="false" id="title" type="text" name="title" maxlength="128" />
+        <label for="text">Post text</label><input autocomplete="false"id="text" type="text" name="text" maxlength="512" />
         <input type="submit" />
         {{error if error != None else ""}}
     </form>
