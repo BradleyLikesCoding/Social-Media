@@ -3,10 +3,10 @@ import hashlib
 import random
 from types import GeneratorType
 import sqlalchemy
-from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy import Column, Float, Integer, String, delete, text
 import sqlalchemy.orm
 
-SALT = ""
+SALT = "giuavoerhmcgiuerhougeaiuvhgeaf"
 
 engine = sqlalchemy.create_engine("sqlite:///tictac.db", echo=True)
 Base = sqlalchemy.orm.declarative_base()
@@ -79,3 +79,20 @@ class Comment(Base):
         self.comment_id = comment_id
         self.post_id = post_id
         self.text = text
+
+
+class Follow(Base):
+    __tablename__ = "follows"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False)
+    following_id = Column(Integer, nullable=False)
+
+    @classmethod
+    def new(cls, user_id, following_id):
+        return cls(generate_id(), user_id, following_id)
+
+    def __init__(self, id, user_id, following_id):
+        self.id = id
+        self.user_id = user_id
+        self.following_id = following_id

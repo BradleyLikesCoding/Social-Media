@@ -38,7 +38,7 @@
                 <div>
                     <p>Posted by {{ post.name }}</p>
                     <h2 style="display: inline;">{{ post.title }}</h2>
-                    <p>{{ post.body }}</p>
+                    <p>{{ post.body|safe }}</p>
                 </div>
             </div>
             <div class="iconsDiv" style="float: right; display: none; /*position: relative; left:95%;%/" hidden>
