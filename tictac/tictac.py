@@ -6,7 +6,6 @@
 #Create a password reset page and add it to flask
 #
 
-from asyncio.windows_events import NULL
 import database
 from flask import Flask, render_template, request, session, redirect, url_for, abort
 from waitress import serve
@@ -37,12 +36,9 @@ def index():
 
 @app.route("/logout")
 def logout():
-    del session["user_id"]
+    if "user_id" in session:
+        del session["user_id"]
     return(redirect(url_for("index")))
-
-@app.route("/test")
-def test():
-    return database.session.query(database.Post).first().body
 
 def is_username_taken(name:str):
     return database.session.query(database.Account).filter_by(username=name).first() != None
@@ -61,7 +57,10 @@ def signup():
             database.session.add(acc)
             database.session.commit()
             session["user_id"] = database.session.query(database.Account).filter_by(username=request.form["name"]).first().id
-            return redirect(url_for("index"))
+            if "redirect" in request.args:
+                return redirect(request.args["redirect"])
+            else:
+                return redirect(url_for("index"))
         else:
             return render_template("signup.html", error = signup["error"])
 
@@ -72,7 +71,10 @@ def login():
     else:
         if check_login(request.form):
             session["user_id"] = database.session.query(database.Account).filter_by(username=request.form["name"]).first().id
-            return redirect(url_for("index"))
+            if "redirect" in request.args:
+                return redirect(request.args["redirect"])
+            else:
+                return redirect(url_for("index"))
         else:
             return(render_template("login.html", error="Invalid Username or Password"))
         
@@ -107,7 +109,7 @@ def get_user_by_name(name):
 
 @app.route("/post", methods=["POST", "GET"])
 def post():
-    if is_valid_user(session["user_id"]):
+    if "user_id" in session and is_valid_user(session["user_id"]):
         if request.method == "GET":
             return render_template("post.html", error=None)
         else:
@@ -120,11 +122,11 @@ def post():
 
 @app.route("/posts")
 def view_posts():
-    return render_template("posts.html", posts=format_posts())
+    return render_template("posts.html", posts=format_posts(), get_user_by_id=get_user_by_id)
 
 @app.route("/comment", methods=["POST"])
 def comment():
-    if is_valid_user(session["user_id"]):
+    if "user_id" in session and is_valid_user(session["user_id"]):
         c = database.Comment.new(session["user_id"], request.form["post_id"], request.form["text"])
         database.session.add(c)
         database.session.commit()
@@ -148,14 +150,15 @@ def format_comments():
     return comments_out
 
 def format_posts():
-    posts = database.session.query(database.Post).order_by(database.Post.post_id.desc())
+    posts = database.session.query(database.Post).order_by(database.Post.post_id.desc()).limit(50)
     posts_out = []
     for p in posts:
         posts_out.append(p)
         posts_out[len(posts_out) - 1].name = get_user_by_id(posts_out[len(posts_out) - 1].owner_id).display_name
-        if len(posts_out) > 50:
-            break
     return posts_out
+
+def get_posts_by_user(user_id, max):
+    return database.session.query(database.Post).filter_by(owner_id=user_id).order_by(database.Post.post_id.desc()).limit(max)
 
 def format_tags(text):
     txt = ""
@@ -196,7 +199,7 @@ def format_tags(text):
 def profile(username):
     user = get_user_by_name(username)
     if user != None:
-        return render_template("profile.html", data=format_profile(user.id))
+        return render_template("profile.html", data=format_profile(user.id), posts=get_posts_by_user(user.id, max=50))
     return abort(404)
 
 def format_profile(profile_id):

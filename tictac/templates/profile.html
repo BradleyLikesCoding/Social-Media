@@ -9,10 +9,78 @@
     <h1>{{ data.profile.username }} @{{ data.profile.display_name }}</h1>
     <p>{{ data.profile.follower_count }} Followers.</p>
     {% if data.signed_in %}<form action="/follow" , method="post">
-    <input type="hidden" name="type" value="{{ "false" if data.following else "true" }}" />
-    <input type="hidden" name="username" value="{{ data.profile.username }}" />
-    <input type="submit" value="{{ "Unfollow" if data.following else "Follow" }}" />
-</form>
+        <input type="hidden" name="type" value="{{ "false" if data.following else "true" }}" />
+        <input type="hidden" name="username" value="{{ data.profile.username }}" />
+        <input type="submit" value="{{ "Unfollow" if data.following else "Follow" }}" />
+    </form>
     {% endif %}
+    <br />
+    <h2>Posts</h2>
+    <style>
+        .rounded {
+            border-radius: 10px;
+        }
+
+        #post-div {
+            position: absolute;
+            width: 50%;
+            height: 75%;
+            top: 50%;
+            left: 50%;
+            background: silver;
+            padding: 15px;
+            border-radius: 10px;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -25%);
+        }
+        .post {
+            border-style: solid;
+            padding: 5px;
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+            display: block;
+            white-space: normal;
+            overflow-wrap: break-word;
+        }
+
+        .scroll {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    </style>
+
+    <div class="scroll">
+        <table>
+            <tr>
+                {% for i in posts %}
+                <td>
+                    <a class="post" href="#" onclick="showPost(this)">
+                        <span class="post-title" style="text-overflow: ellipsis; font-size: 23px;">{{ i.title }}</span>
+                        <br />
+                        <span class="post-body" style="text-overflow: ellipsis;">{{ i.body }}</span>
+                    </a>
+                </td>
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
+    <div id="post-div" hidden style="position: fixed;">
+        <div style="height: 15%;">
+            <h1 style="float: left;">{{ data.profile.display_name }}'s Post</h1>
+            <div onclick="this.parentNode.parentNode.hidden = true;" style="cursor: pointer; font-size:50px; line-height: 1em; float: right;">&times;</div>
+        </div>
+        <br />
+        <h2 style="display: inline;" id="post-popup-title"></h2>
+        <p id="post-popup-body"></p>
+    </div>
+    <script>
+        function showPost(e) {
+            postDiv = document.getElementById("post-div");
+            document.getElementById("post-popup-title").innerHTML = e.querySelector(".post-title").innerHTML;
+            document.getElementById("post-popup-body").innerHTML = e.querySelector(".post-body").innerHTML;
+            postDiv.hidden = false;
+        }
+    </script>
 </body>
 </html>

@@ -36,7 +36,7 @@
         <div style="width: 100%">
             <div style="width: 80%;/*position: relative;*/ display: inline-block;">
                 <div>
-                    <p>Posted by {{ post.name }}</p>
+                    <p>Posted by <a href="{{ url_for("profile", username=get_user_by_id(post.owner_id).display_name) }}">{{ post.name }} @{{ get_user_by_id(post.owner_id).display_name }}</a></p>
                     <h2 style="display: inline;">{{ post.title }}</h2>
                     <p>{{ post.body|safe }}</p>
                 </div>
@@ -58,7 +58,7 @@
         <form id="commentForm" action="/comment" metod="post">
             <input type="hidden" id="formPostId" name="post_id" />
             <label for="comment">Comment: </label>
-            <input required id="comment" autocomplete="off_oiaeroi" type="text" maxlength="256" name="text" />
+            <input required id="comment" autocomplete="off" type="text" maxlength="256" name="text" />
             <input type="submit" />
         </form>
         <p id="error" hidden>Error posting comment</p>
