@@ -6,6 +6,7 @@
     <title></title>
 </head>
 <body>
+    <a href="/"><h1>TicTac Home</h1></a>
     <h1>{{ data.profile.username }} @{{ data.profile.display_name }}</h1>
     <p>{{ data.profile.follower_count }} Followers.</p>
     {% if data.signed_in %}<form action="/follow" , method="post">
@@ -33,6 +34,7 @@
             transform: translate(-50%, -50%);
             -ms-transform: translate(-50%, -25%);
         }
+
         .post {
             border-style: solid;
             padding: 5px;
