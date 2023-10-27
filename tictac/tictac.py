@@ -20,7 +20,7 @@ class Empty:
 
 def main():
     database.init()
-    serve(app, listen="*:5000")
+    serve(app, listen="*:80")
     #app.run(host="0.0.0.0", port=5000)
     database.session.commit()
 
