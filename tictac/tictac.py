@@ -10,6 +10,7 @@ import database
 from flask import Flask, render_template, request, session, redirect, url_for, abort
 from waitress import serve
 import html
+import math
 
 app = Flask(__name__)
 
@@ -120,9 +121,12 @@ def post():
     else:
         return(redirect(url_for("login")))
 
-@app.route("/posts")
+@app.route("/posts", methods=["GET"])
 def view_posts():
-    return render_template("posts.html", posts=format_posts(), get_user_by_id=get_user_by_id)
+    if "page" in request.args:
+        return render_template("posts.html", posts=format_posts(request.args["page"]), get_user_by_id=get_user_by_id)
+    else:
+        return render_template("posts.html", posts=format_posts(1), get_user_by_id=get_user_by_id)
 
 @app.route("/comment", methods=["POST"])
 def comment():
@@ -149,13 +153,18 @@ def format_comments():
             break
     return comments_out
 
-def format_posts():
-    posts = database.session.query(database.Post).order_by(database.Post.post_id.desc()).limit(50)
+def format_posts(page_num):
+    posts = database.session.query(database.Post).order_by(database.Post.post_id.desc())
+    posts = posts[slice(page_num - 1 * 50, ((page_num - 1) * 50) + 50)]
     posts_out = []
     for p in posts:
         posts_out.append(p)
         posts_out[len(posts_out) - 1].name = get_user_by_id(posts_out[len(posts_out) - 1].owner_id).display_name
     return posts_out
+
+def get_post_page_count():
+    page_count = math.ceil(database.session.query(database.Post).count() % 50)
+    return page_count if page_count != 0 else page_count + 1
 
 def get_posts_by_user(user_id, max):
     return database.session.query(database.Post).filter_by(owner_id=user_id).order_by(database.Post.post_id.desc()).limit(max)
