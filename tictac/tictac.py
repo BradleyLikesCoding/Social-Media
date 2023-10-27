@@ -1,4 +1,4 @@
-#Task list:
+#Stuff to do:
 #
 #Create a posting page and add it to flask
 #Create a shorts page and add it to flask
