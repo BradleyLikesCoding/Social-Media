@@ -1,4 +1,4 @@
-#Task list:
+#Stuff to do:
 #
 #Create a posting page and add it to flask
 #Create a shorts page and add it to flask
@@ -21,7 +21,7 @@ class Empty:
 
 def main():
     database.init()
-    serve(app, listen="*:5000")
+    serve(app, listen="*:80")
     #app.run(host="0.0.0.0", port=5000)
     database.session.commit()
 
