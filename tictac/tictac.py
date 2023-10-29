@@ -21,7 +21,8 @@ class Empty:
 
 def main():
     database.init()
-    serve(app, listen="*:80")
+    #add_test_posts(100)
+    serve(app, listen="*:5000")
     #app.run(host="0.0.0.0", port=5000)
     database.session.commit()
 
@@ -124,7 +125,7 @@ def post():
 @app.route("/posts", methods=["GET"])
 def view_posts():
     if "page" in request.args:
-        return render_template("posts.html", posts=format_posts(request.args["page"]), get_user_by_id=get_user_by_id)
+        return render_template("posts.html", posts=format_posts(int(request.args["page"])), get_user_by_id=get_user_by_id)
     else:
         return render_template("posts.html", posts=format_posts(1), get_user_by_id=get_user_by_id)
 
@@ -155,7 +156,7 @@ def format_comments():
 
 def format_posts(page_num):
     posts = database.session.query(database.Post).order_by(database.Post.post_id.desc())
-    posts = posts[slice(page_num - 1 * 50, ((page_num - 1) * 50) + 50)]
+    posts = posts[slice((page_num - 1) * 50, ((page_num - 1) * 50) + 50)]
     posts_out = []
     for p in posts:
         posts_out.append(p)
@@ -235,6 +236,12 @@ def follow():
                 result = database.session.query(database.Follow).filter(database.Follow.user_id == session["user_id"]).filter(database.Follow.following_id == get_user_by_name(request.form["username"]).id).delete(synchronize_session=False)
             return redirect(url_for("profile", username=request.form["username"]))
     return redirect(url_for("login"))
+
+def add_test_posts(count):
+    for i in range(count):
+        p = database.Post.new(0, "test", count + 1)
+        database.session.add(p)
+        database.session.commit()
 
 if __name__ == "__main__":
     main()
