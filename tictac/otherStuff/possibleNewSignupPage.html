@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup for TicTac</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<style>
+    html,
+    body {
+        margin: 0;
+        height: 100%;
+    }
+
+    input {
+        margin: 5px;
+    }
+</style>
+
+<body class="w3-display-container" style="background-color: RGB(47, 54, 64);">
+    <a style="font-size:25px;" href="/">
+        <h1>TicTac Home</h1>
+    </a>
+    <div class="w3-display-middle">
+        <h2 style="font-size:40px; font-family: fantasy, copperplate; text-align: center; color: white;">Signup for TicTac</h2><br>
+        <form action="" method="post">
+            <input required placeholder="Display Name" style="font-size:50px;" id="displayname" type="text" name="displayname" maxlenght="32" /><br />
+            <input required placeholder="Username" style="font-size:50px;" id="username" type="text" name="name" maxlenght="32" /><br />
+            <input required placeholder="Password" id="password" style="font-size:50px;" type="password" name="pswd" maxlength="40" /><br />
+            <input required type="submit" style="margin: 10px; background-color: white; font-size: 40px; border-width: 4px; border-color: white; border-radius: 10px" value="Create Account" />
+        </form>
+        <p style="font-size:20px; color: white;">Already have an account? <a href="/login">Login</a> instead.</p>
+    </div>
+</body>
+
+</html>
