@@ -147,7 +147,7 @@ def format_comments():
     comments_out = []
     for p in comments:
         comments_out.append(p)
-        comments_out[len(comments_out) - 1].name = get_user_by_id(comments_out[len(comments_out) - 1].commenter_id).display_name
+        comments_out[len(comments_out) - 1].display_name = get_user_by_id(comments_out[len(comments_out) - 1].commenter_id).display_name
         if len(comments_out) > 50:
             break
     return comments_out
@@ -158,7 +158,6 @@ def format_posts(page_num):
     posts_out = []
     for p in posts:
         posts_out.append(p)
-        posts_out[len(posts_out) - 1].name = get_user_by_id(posts_out[len(posts_out) - 1].owner_id).display_name
     return posts_out
 
 def get_post_page_count():

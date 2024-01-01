@@ -36,7 +36,7 @@
         <div style="width: 100%">
             <div style="width: 80%;/*position: relative;*/ display: inline-block;">
                 <div>
-                    <p>Posted by <a href="{{ url_for("profile", username=get_user_by_id(post.owner_id).display_name) }}">{{ post.name }} @{{ get_user_by_id(post.owner_id).username }}</a></p>
+                    <p>Posted by <a href="{{ url_for("profile", username=get_user_by_id(post.owner_id).username) }}">{{ get_user_by_id(post.owner_id).display_name }} @{{ get_user_by_id(post.owner_id).username }}</a></p>
                     <h2 style="display: inline;">{{ post.title }}</h2>
                     <p>{{ post.body|safe }}</p>
                 </div>
