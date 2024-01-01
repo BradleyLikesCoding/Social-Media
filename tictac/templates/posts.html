@@ -50,16 +50,15 @@
 
 
     {% endfor %}
-    <div id="comment-div" hidden style="position: fixed;">
+    <div id="comment-div" hidden style="position: fixed; overflow: scroll;">
         <div style="height:15%;">
             <h2 style="float: left;">Comments</h2>
             <div onclick="this.parentNode.parentNode.hidden = true;" style="cursor: pointer; font-size:50px; line-height: 1em; float: right;">&times;</div>
         </div>
-        <form id="commentForm" action="/comment" metod="post">
+        <form id="commentForm" action="/comment" method="post">
             <input type="hidden" id="formPostId" name="post_id" />
-            <label for="comment">Comment: </label>
             <input required id="comment" autocomplete="off" type="text" maxlength="256" name="text" />
-            <input type="submit" />
+            <input type="submit" value="Comment"/>
         </form>
         <p id="error" hidden>Error posting comment</p>
         <div id="comments">Loading...</div>
@@ -69,16 +68,16 @@
         var refreshCommentTimeout = 0;
         function refreshComments() {
             if (!commentDiv.hidden) {
-                loadComments(currentPostId);
+                loadComments(currentPostId, false);
             }
         }
         const commentDiv = document.getElementById("comment-div");
-        async function loadComments(postId) {
+        async function loadComments(postId, isFirstLoad) {
             clearTimeout(refreshCommentTimeout);
             refreshCommentTimeout = setTimeout(refreshComments, 10000);
             currentPostId = postId;
             const commentEl = document.getElementById("comments");
-            commentEl.innerHTML = "Loading...";
+            if(isFirstLoad) commentEl.innerHTML = "";
             commentDiv.hidden = false;
             commentRequest = await fetch("/comments?id=" + postId);
             var val = await commentRequest.text();
@@ -94,12 +93,13 @@
                 method: "POST",
                 body: new FormData(commentForm)
             });
-            if (r.ok) {
+            var responseText = await r.text();
+            if (responseText == "success") {
                 comment.value = "";
                 err.hidden = true;
                 loadComments(currentPostId);
             } else {
-                if (await r.text() == "notloggedin") {
+                if (responseText == "notloggedin") {
                     err.innerHTML = "You need to <a href=\"{{url_for('login')}}\">login</a> or <a href=\"{{url_for('signup')}}\">signup</a> in order to post a comment.";
                     err.hidden = false;
                 } else {

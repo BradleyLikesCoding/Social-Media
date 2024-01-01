@@ -10,8 +10,8 @@
     <form action="/signup{{ "?redirect=" + request.args["redirect"] if "redirect" in request.args else "" }}" method="post">
         <label for="displayname">Display name</label><input id="displayname" type="text" name="displayname" maxlenght="32" /><br />
         <label for="username">Username</label><input id="username" type="text" name="name" maxlenght="32" /><br />
-        <label for="password">Password</label><input id="password" type="password" name="pswd" maxlength="40" />
-        <input type="submit" />
+        <label for="password">Password</label><input id="password" type="password" name="pswd" maxlength="40" /><br />
+        <input type="submit" value="Signup"/>
         {{error if error != None else ""}}
     </form>
     <p>Already have an account? <a href="/login">Login</a> instead.</p>

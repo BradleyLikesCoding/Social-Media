@@ -1,5 +1,5 @@
 ﻿{% if comments|length == 0 %}
-<br /><h2>No comments yet...</h2>
+<h2>No comments yet...</h2>
 {% else %}
 {% for comment in comments %}
 <div style="border-style: solid;" class="rounded comment"><h3>{{comment.name}}</h3>

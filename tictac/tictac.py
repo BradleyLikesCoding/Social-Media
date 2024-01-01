@@ -1,9 +1,7 @@
 #Stuff to do:
 #
-#Create a posting page and add it to flask
-#Create a shorts page and add it to flask
 #Add email verification
-#Create a password reset page and add it to flask
+#Implement passcode reseting
 #
 
 import database
